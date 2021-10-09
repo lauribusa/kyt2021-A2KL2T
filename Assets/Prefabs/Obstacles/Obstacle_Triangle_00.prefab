@@ -323,7 +323,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3905220180671129244}
   m_Layer: 0
-  m_Name: Obstacle_Triangle
+  m_Name: Obstacle_Triangle_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
