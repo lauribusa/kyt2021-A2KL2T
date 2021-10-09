@@ -12,7 +12,6 @@ public class GameManager : MonoBehaviour
 
     private GameManager _instance;
 
-
     #endregion
 
 
@@ -59,6 +58,7 @@ public class GameManager : MonoBehaviour
     private void HandleOnPlayerDead(PlayerController player)
     {
         Debug.Log("Player is dead: " + player);
+        Destroy(player.gameObject);
     }
 
     public Action<PlayerInput> OnPlayerJoined(Action<PlayerInput> playerInput)
