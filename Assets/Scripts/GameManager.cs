@@ -1,18 +1,39 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+	#region Exposed
+	
+	#endregion
+
+	
+	#region Private And Protected
+   	
+	#endregion
+
+	
+	#region Unity API
+	
+    private void Start()
     {
         
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         
     }
+    
+    #endregion
+    
+
+    #region Main
+    
+    #endregion
+
+
+    #region Singleton
+
+    #endregion
 }
+
