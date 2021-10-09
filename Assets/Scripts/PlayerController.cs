@@ -15,6 +15,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float _speedWithShield = 5;
 
+    [SerializeField]
+    private GameObject _shield;
+
     public OnPlayerCollision onPlayerCollision;
 	
 	#endregion
@@ -25,6 +28,8 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D _rigidbody;
     private Transform _transform;
     private Vector2 _inputMove;
+    private Vector3 _inputOrientation;
+    private float _currentSpeed;
    	
    	#endregion
 	
@@ -42,6 +47,8 @@ public class PlayerController : MonoBehaviour
     {
         SetupMovement();
         SetupDirection();
+        UpdateSpeedOnShield();
+        DisplayShield();
     }
 
     private void FixedUpdate()
@@ -56,7 +63,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedMove()
     {
-        Vector2 velocity = _inputMove * _speed * Time.fixedDeltaTime;
+        Vector2 velocity = _inputMove * _currentSpeed * Time.fixedDeltaTime;
         _rigidbody.velocity = velocity;
     }
 
@@ -74,9 +81,21 @@ public class PlayerController : MonoBehaviour
         float horizontal = Input.GetAxisRaw("HorizontalOrientation");
         float vertical = Input.GetAxisRaw("VerticalOrientation");
 
-        Vector3 direction = _transform.position + new Vector3(horizontal, vertical, 0);
+        _inputOrientation = new Vector3(horizontal, vertical, 0);
         
-        _transform.LookAt(direction, Vector3.forward);
+        _transform.LookAt(_transform.position + _inputOrientation, Vector3.forward);
+    }
+
+    private void DisplayShield()
+    {
+        bool hasShield = _inputOrientation != Vector3.zero;
+        _shield.SetActive(hasShield);
+    }
+
+    private void UpdateSpeedOnShield()
+    {
+        bool hasShield = _inputOrientation != Vector3.zero;
+        _currentSpeed = hasShield ? _speedWithShield : _speed;
     }
 
     private void HandleDeath()
