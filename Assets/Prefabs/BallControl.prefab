@@ -134,6 +134,7 @@ MonoBehaviour:
   velocityCollisionMode: 0
   velocityIncrement: 0.5
   velocityDecrement: 0.5
+  maxSpeed: 50
 --- !u!50 &4090319710251167923
 Rigidbody2D:
   serializedVersion: 4
