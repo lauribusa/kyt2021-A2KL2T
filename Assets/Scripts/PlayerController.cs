@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -33,7 +34,10 @@ public class PlayerController : MonoBehaviour
     private Transform _transform;
     private Vector2 _inputMove;
     private float _currentSpeed;
-    private bool _isParrying;
+    private bool _isParrying { get; set; }
+    private PlayerFaction _playerFaction { get; set; }
+
+    private float parryingTimeReference { get; set; }
 
     #endregion
 
@@ -46,6 +50,7 @@ public class PlayerController : MonoBehaviour
         if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody2D>();
         if (_transform == null) _transform = GetComponent<Transform>();
         onPlayerCollision.AddListener(HandleOnPlayerCollision);
+        parryingTimeReference = GameManager.I.gameData.parryingTime;
     }
 
     private void FixedUpdate()
@@ -98,7 +103,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerParry(InputAction.CallbackContext callbackContext)
     {
-
+        StartCoroutine(WhileParrying(parryingTimeReference));
     }
 
     public void OnAiming(InputAction.CallbackContext callbackContext)
