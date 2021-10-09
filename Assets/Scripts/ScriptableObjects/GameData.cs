@@ -7,7 +7,7 @@ public class GameData : ScriptableObject
 	[Header("Timers")]
 	[Tooltip("Initial timer on game start.")]
 	public int initialTimer;
-	[Header("Initial Map")]
-	public GameObject initialMap;
-}
 
+	[Header("Initial Map")]
+	public GameObject[] maps;
+}
