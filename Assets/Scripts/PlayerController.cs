@@ -68,14 +68,38 @@ public class PlayerController : MonoBehaviour
         _inputMove.Normalize();
     }
 
+    private void EnableShield()
+    {
+        _currentSpeed = _speedWithShield;
+        _shield.SetActive(true);
+    }
+
+    private void DisableShield()
+    {
+        _shield.SetActive(false);
+        _currentSpeed = _speed;
+    }
+
     public void OnAiming(InputAction.CallbackContext callbackContext)
     {
         Vector2 rightStick = callbackContext.ReadValue<Vector2>();
+
+        if(rightStick != Vector2.zero)
+        {
+            EnableShield();
+        } else
+        {
+            DisableShield();
+        }
 
         Vector3 direction = _transform.position + new Vector3(rightStick.x, rightStick.y, 0);
 
         _transform.LookAt(direction, Vector3.forward);
 
+        Debug.Log("lol: " + callbackContext.performed +  callbackContext.canceled + callbackContext.ReadValue<Vector2>());
+
+
+        
         /*
         si on vise avec le bouclier
             _shield.SetActive(true)
