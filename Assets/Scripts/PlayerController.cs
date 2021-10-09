@@ -23,7 +23,6 @@ public class PlayerController : MonoBehaviour
 
     #region Private And Protected
 
-    private Gamepad _gamepad;
     private Rigidbody2D _rigidbody;
     private Transform _transform;
     private Vector2 _inputMove;
@@ -35,23 +34,15 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("Check connected devices: " + Gamepad.all.Count);
-        _gamepad = Gamepad.current;
         if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody2D>();
         if (_transform == null) _transform = GetComponent<Transform>();
         onPlayerCollision.AddListener(HandleOnPlayerCollision);
     }
 
-    private void Update()
-    {
-        //SetupMovement();
-        //SetupDirection();
-        Gamepad.current.leftStick.ReadValue();
-    }
+
 
     private void FixedUpdate()
     {
-        //if (_gamepad == null) return;
         FixedMove();
     }
 
@@ -66,12 +57,6 @@ public class PlayerController : MonoBehaviour
         _rigidbody.velocity = velocity;
     }
 
-    private void SetupMovement()
-    {
-        _inputMove = _gamepad.leftStick.ReadValue();
-        _inputMove.Normalize();
-    }
-
     public void OnMovement(InputAction.CallbackContext callbackContext)
     {
 
@@ -82,19 +67,9 @@ public class PlayerController : MonoBehaviour
     public void OnAiming(InputAction.CallbackContext callbackContext)
     {
         Vector2 rightStick = callbackContext.ReadValue<Vector2>();
-        Debug.Log(rightStick);
 
         Vector3 direction = _transform.position + new Vector3(rightStick.x, rightStick.y, 0);
 
-        _transform.LookAt(direction, Vector3.forward);
-    }
-
-    private void SetupDirection()
-    {
-        Vector2 rightStick = _gamepad.rightStick.ReadValue();
-
-        Vector3 direction = _transform.position + new Vector3(rightStick.x, rightStick.y, 0);
-        
         _transform.LookAt(direction, Vector3.forward);
     }
 
