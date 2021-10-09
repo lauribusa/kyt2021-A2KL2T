@@ -23,6 +23,8 @@ public class PlayerController : MonoBehaviour
 
     #region Private And Protected
 
+    [SerializeField]
+    private PlayerInput inputActions;
     private Rigidbody2D _rigidbody;
     private Transform _transform;
     private Vector2 _inputMove;
@@ -81,8 +83,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private void HandleOnPlayerCollision(Collider2D collider, Collision2D collision, PlayerColliderType colliderType)
     {
-        Debug.Log("Collision Detected: "+colliderType.ToString());
-
         if (colliderType == PlayerColliderType.Hitbox)
         {
             HandleDeath();

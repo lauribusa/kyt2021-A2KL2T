@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
+using System;
 
 [System.Serializable]
 public class OnPlayerDead : UnityEvent<PlayerController>{}
@@ -29,6 +31,13 @@ public class GameManager : MonoBehaviour
         onPlayerDead.AddListener(HandleOnPlayerDead);
     }
 
+    private void Instance_onPlayerJoined(UnityEngine.InputSystem.PlayerInput obj)
+    {
+        throw new System.NotImplementedException();
+    }
+
+
+
     #endregion
 
 
@@ -50,6 +59,21 @@ public class GameManager : MonoBehaviour
     private void HandleOnPlayerDead(PlayerController player)
     {
         Debug.Log("Player is dead: " + player);
+    }
+
+    public Action<PlayerInput> OnPlayerJoined(Action<PlayerInput> playerInput)
+    {
+        return null;
+    }
+
+    public void OnPlayerJoin(PlayerInput test)
+    {
+
+    }
+
+    public void onjoin()
+    {
+
     }
 
     #endregion

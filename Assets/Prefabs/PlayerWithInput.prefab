@@ -75,7 +75,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6860818231822041139, guid: 29503d7f3dd75b73198d1ef58bf2032e, type: 3}
       propertyPath: m_Name
-      value: PlayerInput
+      value: PlayerWithInput
       objectReference: {fileID: 0}
     - target: {fileID: 6860818231822041164, guid: 29503d7f3dd75b73198d1ef58bf2032e, type: 3}
       propertyPath: m_RootOrder
