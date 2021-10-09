@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 
 [System.Serializable]
 public class OnPlayerCollision : UnityEvent<Collider2D, Collision2D, PlayerColliderType> { }
@@ -7,7 +8,7 @@ public class OnPlayerCollision : UnityEvent<Collider2D, Collision2D, PlayerColli
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
-	#region Exposed
+    #region Exposed
 
     [SerializeField]
     private float _speed = 10;
@@ -16,21 +17,21 @@ public class PlayerController : MonoBehaviour
     private float _speedWithShield = 5;
 
     public OnPlayerCollision onPlayerCollision;
-	
-	#endregion
-	
-	
-   	#region Private And Protected
+
+    #endregion
+
+
+    #region Private And Protected
 
     private Rigidbody2D _rigidbody;
     private Transform _transform;
     private Vector2 _inputMove;
-   	
-   	#endregion
-	
-	
-	#region Unity API
-	
+
+    #endregion
+
+
+    #region Unity API
+
     private void Start()
     {
         if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody2D>();
@@ -38,11 +39,7 @@ public class PlayerController : MonoBehaviour
         onPlayerCollision.AddListener(HandleOnPlayerCollision);
     }
 
-    private void Update()
-    {
-        SetupMovement();
-        SetupDirection();
-    }
+
 
     private void FixedUpdate()
     {
@@ -50,8 +47,8 @@ public class PlayerController : MonoBehaviour
     }
 
     #endregion
-    
-    
+
+
     #region Main
 
     private void FixedMove()
@@ -60,22 +57,19 @@ public class PlayerController : MonoBehaviour
         _rigidbody.velocity = velocity;
     }
 
-    private void SetupMovement()
+    public void OnMovement(InputAction.CallbackContext callbackContext)
     {
-        float horizontal = Input.GetAxisRaw("HorizontalMove");
-        float vertical = Input.GetAxisRaw("VerticalMove");
 
-        _inputMove = new Vector2(horizontal, vertical);
+        _inputMove = callbackContext.ReadValue<Vector2>();
         _inputMove.Normalize();
     }
 
-    private void SetupDirection()
+    public void OnAiming(InputAction.CallbackContext callbackContext)
     {
-        float horizontal = Input.GetAxisRaw("HorizontalOrientation");
-        float vertical = Input.GetAxisRaw("VerticalOrientation");
+        Vector2 rightStick = callbackContext.ReadValue<Vector2>();
 
-        Vector3 direction = _transform.position + new Vector3(horizontal, vertical, 0);
-        
+        Vector3 direction = _transform.position + new Vector3(rightStick.x, rightStick.y, 0);
+
         _transform.LookAt(direction, Vector3.forward);
     }
 
