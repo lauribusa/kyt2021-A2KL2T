@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour
     private Transform _transform;
     private Vector2 _inputMove;
     private float _currentSpeed;
+    private bool _isParrying;
 
     #endregion
 
@@ -80,6 +81,11 @@ public class PlayerController : MonoBehaviour
         _currentSpeed = _speed;
     }
 
+    private void TriggerParry()
+    {
+
+    }
+
     public void OnAiming(InputAction.CallbackContext callbackContext)
     {
         Vector2 rightStick = callbackContext.ReadValue<Vector2>();
@@ -96,19 +102,8 @@ public class PlayerController : MonoBehaviour
 
         _transform.LookAt(direction, Vector3.forward);
 
-        Debug.Log("lol: " + callbackContext.performed +  callbackContext.canceled + callbackContext.ReadValue<Vector2>());
-
-
-        
-        /*
-        si on vise avec le bouclier
-            _shield.SetActive(true)
-            _currentSpeed = _speedWithShield
-        Sinon
-            _shield.SetActive(false)
-            _currentSpeed = _speed
-        */
     }
+
 
     private void HandleDeath()
     {
@@ -118,7 +113,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private void HandleOnPlayerCollision(Collider2D collider, Collision2D collision, PlayerColliderType colliderType)
     {
-        if (colliderType == PlayerColliderType.Hitbox)
+        if (colliderType == PlayerColliderType.Hitbox && collision.collider.gameObject.layer == 7)
         {
             HandleDeath();
         }
