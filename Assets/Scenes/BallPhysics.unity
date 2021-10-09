@@ -690,7 +690,10 @@ MonoBehaviour:
   ballRenderer: {fileID: 287637496}
   ballCollider: {fileID: 1390363512}
   ballRigidbody: {fileID: 1390363515}
-  initialImpulse: {x: 500, y: 750}
+  initialImpulse: {x: 2, y: 5}
+  velocityCollisionMode: 0
+  velocityIncrement: 0
+  velocityDecrement: 0
 --- !u!4 &1390363514
 Transform:
   m_ObjectHideFlags: 0
