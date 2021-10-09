@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
+using System;
 
 [System.Serializable]
 public class OnPlayerDead : UnityEvent<PlayerController>{}
@@ -9,7 +11,6 @@ public class GameManager : MonoBehaviour
     #region Private And Protected
 
     private GameManager _instance;
-
 
     #endregion
 
@@ -28,6 +29,13 @@ public class GameManager : MonoBehaviour
         CheckForDuplicate();
         onPlayerDead.AddListener(HandleOnPlayerDead);
     }
+
+    private void Instance_onPlayerJoined(UnityEngine.InputSystem.PlayerInput obj)
+    {
+        throw new System.NotImplementedException();
+    }
+
+
 
     #endregion
 
@@ -50,6 +58,22 @@ public class GameManager : MonoBehaviour
     private void HandleOnPlayerDead(PlayerController player)
     {
         Debug.Log("Player is dead: " + player);
+        Destroy(player.gameObject);
+    }
+
+    public Action<PlayerInput> OnPlayerJoined(Action<PlayerInput> playerInput)
+    {
+        return null;
+    }
+
+    public void OnPlayerJoin(PlayerInput test)
+    {
+
+    }
+
+    public void onjoin()
+    {
+
     }
 
     #endregion

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 
 [System.Serializable]
 public class OnPlayerCollision : UnityEvent<Collider2D, Collision2D, PlayerColliderType> { }
@@ -7,7 +8,7 @@ public class OnPlayerCollision : UnityEvent<Collider2D, Collision2D, PlayerColli
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
-	#region Exposed
+    #region Exposed
 
     [SerializeField]
     private float _speed = 10;
@@ -15,33 +16,34 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float _speedWithShield = 5;
 
-    public OnPlayerCollision onPlayerCollision;
-	
-	#endregion
-	
-	
-   	#region Private And Protected
+    [SerializeField]
+    private GameObject _shield;
 
+    public OnPlayerCollision onPlayerCollision;
+
+    #endregion
+
+
+    #region Private And Protected
+
+    [SerializeField]
+    private PlayerInput inputActions;
     private Rigidbody2D _rigidbody;
     private Transform _transform;
     private Vector2 _inputMove;
-   	
-   	#endregion
-	
-	
-	#region Unity API
-	
+    private float _currentSpeed;
+
+    #endregion
+
+
+    #region Unity API
+
     private void Start()
     {
+        _currentSpeed = _speed;
         if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody2D>();
         if (_transform == null) _transform = GetComponent<Transform>();
         onPlayerCollision.AddListener(HandleOnPlayerCollision);
-    }
-
-    private void Update()
-    {
-        SetupMovement();
-        SetupDirection();
     }
 
     private void FixedUpdate()
@@ -50,33 +52,62 @@ public class PlayerController : MonoBehaviour
     }
 
     #endregion
-    
-    
+
+
     #region Main
 
     private void FixedMove()
     {
-        Vector2 velocity = _inputMove * _speed * Time.fixedDeltaTime;
+        Vector2 velocity = _inputMove * _currentSpeed * Time.fixedDeltaTime;
         _rigidbody.velocity = velocity;
     }
 
-    private void SetupMovement()
+    public void OnMovement(InputAction.CallbackContext callbackContext)
     {
-        float horizontal = Input.GetAxisRaw("HorizontalMove");
-        float vertical = Input.GetAxisRaw("VerticalMove");
-
-        _inputMove = new Vector2(horizontal, vertical);
+        _inputMove = callbackContext.ReadValue<Vector2>();
         _inputMove.Normalize();
     }
 
-    private void SetupDirection()
+    private void EnableShield()
     {
-        float horizontal = Input.GetAxisRaw("HorizontalOrientation");
-        float vertical = Input.GetAxisRaw("VerticalOrientation");
+        _currentSpeed = _speedWithShield;
+        _shield.SetActive(true);
+    }
 
-        Vector3 direction = _transform.position + new Vector3(horizontal, vertical, 0);
-        
+    private void DisableShield()
+    {
+        _shield.SetActive(false);
+        _currentSpeed = _speed;
+    }
+
+    public void OnAiming(InputAction.CallbackContext callbackContext)
+    {
+        Vector2 rightStick = callbackContext.ReadValue<Vector2>();
+
+        if(rightStick != Vector2.zero)
+        {
+            EnableShield();
+        } else
+        {
+            DisableShield();
+        }
+
+        Vector3 direction = _transform.position + new Vector3(rightStick.x, rightStick.y, 0);
+
         _transform.LookAt(direction, Vector3.forward);
+
+        Debug.Log("lol: " + callbackContext.performed +  callbackContext.canceled + callbackContext.ReadValue<Vector2>());
+
+
+        
+        /*
+        si on vise avec le bouclier
+            _shield.SetActive(true)
+            _currentSpeed = _speedWithShield
+        Sinon
+            _shield.SetActive(false)
+            _currentSpeed = _speed
+        */
     }
 
     private void HandleDeath()
@@ -87,8 +118,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private void HandleOnPlayerCollision(Collider2D collider, Collision2D collision, PlayerColliderType colliderType)
     {
-        Debug.Log("Collision Detected: "+colliderType.ToString());
-
         if (colliderType == PlayerColliderType.Hitbox)
         {
             HandleDeath();
