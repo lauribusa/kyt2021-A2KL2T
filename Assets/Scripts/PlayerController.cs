@@ -1,12 +1,17 @@
 using UnityEngine;
+using UnityEngine.Events;
+
+[System.Serializable]
+public class OnPlayerCollision : UnityEvent<Collider2D, Collision2D, PlayerColliderType> { }
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class PlayerMovement : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
 	#region Exposed
 
     [SerializeField]
     private float _speed = 10;
+    public OnPlayerCollision onPlayerCollision;
 	
 	#endregion
 	
@@ -26,6 +31,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody2D>();
         if (_transform == null) _transform = GetComponent<Transform>();
+        onPlayerCollision.AddListener(HandleOnPlayerCollision);
     }
 
     private void Update()
@@ -67,6 +73,11 @@ public class PlayerMovement : MonoBehaviour
         Vector3 direction = _transform.position + new Vector3(horizontal, vertical, 0);
         
         _transform.LookAt(direction, Vector3.forward);
+    }
+    [SerializeField]
+    private void HandleOnPlayerCollision(Collider2D collider, Collision2D collision, PlayerColliderType colliderType)
+    {
+        Debug.Log("Collision Detected: "+colliderType.ToString());
     }
     
     #endregion
