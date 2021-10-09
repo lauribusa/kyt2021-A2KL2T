@@ -93,7 +93,7 @@ GameObject:
   - component: {fileID: 4090319710251167921}
   - component: {fileID: 4090319710251167923}
   - component: {fileID: 4090319710251167920}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BallControl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -134,6 +134,7 @@ MonoBehaviour:
   velocityCollisionMode: 0
   velocityIncrement: 0.5
   velocityDecrement: 0.5
+  maxSpeed: 50
 --- !u!50 &4090319710251167923
 Rigidbody2D:
   serializedVersion: 4
