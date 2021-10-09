@@ -21,6 +21,9 @@ public enum VelocityCollisionMode
     public float velocityIncrement;
     [Tooltip("Decrement velocity by this amount on collision")]
     public float velocityDecrement;
+    [Tooltip("Maximum speed possible for the ball")]
+    [SerializeField]
+    private float maxSpeed;
     #endregion
 
 
@@ -42,8 +45,6 @@ public enum VelocityCollisionMode
         ballRigidbody.velocity = ballRigidbody.velocity.normalized * ballVelocityMagnitude;
     }
 
-    
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if(velocityCollisionMode == VelocityCollisionMode.Increment)
@@ -62,11 +63,13 @@ public enum VelocityCollisionMode
     private void IncreaseVelocityOnCollision()
     {
         ballVelocityMagnitude += velocityIncrement;
+        if (ballVelocityMagnitude >= maxSpeed) ballVelocityMagnitude = maxSpeed;
     }
 
     private void DecreaseVelocityOnCollision()
     {
         ballVelocityMagnitude -= velocityDecrement;
+        if (ballVelocityMagnitude <= 0) ballVelocityMagnitude = 0;
     }
 
     private void ReflectBall(Collision2D collision)
