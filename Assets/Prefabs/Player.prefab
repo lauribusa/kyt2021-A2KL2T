@@ -225,6 +225,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 500
+  _speedWithShield: 50
+  _shield: {fileID: 360742286270107916}
   onPlayerCollision:
     m_PersistentCalls:
       m_Calls:
