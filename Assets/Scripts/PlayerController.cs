@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 
 [System.Serializable]
 public class OnPlayerCollision : UnityEvent<Collider2D, Collision2D, PlayerColliderType> { }
@@ -12,12 +13,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float _speed = 10;
     public OnPlayerCollision onPlayerCollision;
-	
-	#endregion
-	
-	
-   	#region Private And Protected
 
+    #endregion
+
+
+    #region Private And Protected
+
+    private Gamepad _gamepad;
     private Rigidbody2D _rigidbody;
     private Transform _transform;
     private Vector2 _inputMove;
@@ -29,6 +31,8 @@ public class PlayerController : MonoBehaviour
 	
     private void Start()
     {
+        Debug.Log("Check connected devices: " + Gamepad.all.Count);
+        _gamepad = Gamepad.current;
         if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody2D>();
         if (_transform == null) _transform = GetComponent<Transform>();
         onPlayerCollision.AddListener(HandleOnPlayerCollision);
@@ -42,6 +46,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (_gamepad == null) return;
         FixedMove();
     }
     
@@ -58,19 +63,17 @@ public class PlayerController : MonoBehaviour
 
     private void SetupMovement()
     {
-        float horizontal = Input.GetAxisRaw("HorizontalMove");
-        float vertical = Input.GetAxisRaw("VerticalMove");
-
-        _inputMove = new Vector2(horizontal, vertical);
+        _inputMove = _gamepad.leftStick.ReadValue();
         _inputMove.Normalize();
     }
 
+
+
     private void SetupDirection()
     {
-        float horizontal = Input.GetAxisRaw("HorizontalOrientation");
-        float vertical = Input.GetAxisRaw("VerticalOrientation");
+        Vector2 rightStick = _gamepad.rightStick.ReadValue();
 
-        Vector3 direction = _transform.position + new Vector3(horizontal, vertical, 0);
+        Vector3 direction = _transform.position + new Vector3(rightStick.x, rightStick.y, 0);
         
         _transform.LookAt(direction, Vector3.forward);
     }
