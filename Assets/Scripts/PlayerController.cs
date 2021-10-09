@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D _rigidbody;
     private Transform _transform;
     private Vector2 _inputMove;
+    private float _currentSpeed;
 
     #endregion
 
@@ -37,12 +38,11 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        _currentSpeed = _speed;
         if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody2D>();
         if (_transform == null) _transform = GetComponent<Transform>();
         onPlayerCollision.AddListener(HandleOnPlayerCollision);
     }
-
-
 
     private void FixedUpdate()
     {
@@ -62,7 +62,6 @@ public class PlayerController : MonoBehaviour
 
     public void OnMovement(InputAction.CallbackContext callbackContext)
     {
-
         _inputMove = callbackContext.ReadValue<Vector2>();
         _inputMove.Normalize();
     }
@@ -74,6 +73,15 @@ public class PlayerController : MonoBehaviour
         Vector3 direction = _transform.position + new Vector3(rightStick.x, rightStick.y, 0);
 
         _transform.LookAt(direction, Vector3.forward);
+
+        /*
+        si on vise avec le bouclier
+            _shield.SetActive(true)
+            _currentSpeed = _speedWithShield
+        Sinon
+            _shield.SetActive(false)
+            _currentSpeed = _speed
+        */
     }
 
     private void HandleDeath()
