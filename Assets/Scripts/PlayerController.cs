@@ -11,6 +11,10 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     private float _speed = 10;
+
+    [SerializeField]
+    private float _speedWithShield = 5;
+
     public OnPlayerCollision onPlayerCollision;
 	
 	#endregion
@@ -44,7 +48,7 @@ public class PlayerController : MonoBehaviour
     {
         FixedMove();
     }
-    
+
     #endregion
     
     
@@ -74,10 +78,21 @@ public class PlayerController : MonoBehaviour
         
         _transform.LookAt(direction, Vector3.forward);
     }
+
+    private void HandleDeath()
+    {
+        GameManager.I.onPlayerDead?.Invoke(this);
+    }
+
     [SerializeField]
     private void HandleOnPlayerCollision(Collider2D collider, Collision2D collision, PlayerColliderType colliderType)
     {
         Debug.Log("Collision Detected: "+colliderType.ToString());
+
+        if (colliderType == PlayerColliderType.Hitbox)
+        {
+            HandleDeath();
+        }
     }
     
     #endregion
