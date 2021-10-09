@@ -93,7 +93,7 @@ GameObject:
   - component: {fileID: 4090319710251167921}
   - component: {fileID: 4090319710251167923}
   - component: {fileID: 4090319710251167920}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BallControl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
