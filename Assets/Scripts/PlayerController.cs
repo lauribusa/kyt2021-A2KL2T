@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -81,7 +82,21 @@ public class PlayerController : MonoBehaviour
         _currentSpeed = _speed;
     }
 
-    private void TriggerParry()
+    public IEnumerator WhileParrying(float time)
+    {
+        _isParrying = true;
+        float elapsed = 0.0f;
+        while (elapsed < time)
+        {
+            Debug.Log("Still in loop");
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        _isParrying = false;
+        yield break;
+    }
+
+    private void OnTriggerParry(InputAction.CallbackContext callbackContext)
     {
 
     }
