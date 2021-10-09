@@ -42,7 +42,7 @@ public enum VelocityCollisionMode
         ballRigidbody.velocity = ballRigidbody.velocity.normalized * ballVelocityMagnitude;
     }
 
-    #endregion
+    
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -54,6 +54,8 @@ public enum VelocityCollisionMode
             DecreaseVelocityOnCollision();   
         }
     }
+
+    #endregion
 
     #region Main
 
