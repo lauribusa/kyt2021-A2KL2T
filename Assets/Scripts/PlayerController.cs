@@ -8,7 +8,7 @@ public class OnPlayerCollision : UnityEvent<Collider2D, Collision2D, PlayerColli
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
-	#region Exposed
+    #region Exposed
 
     [SerializeField]
     private float _speed = 10;
@@ -27,12 +27,12 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D _rigidbody;
     private Transform _transform;
     private Vector2 _inputMove;
-   	
-   	#endregion
-	
-	
-	#region Unity API
-	
+
+    #endregion
+
+
+    #region Unity API
+
     private void Start()
     {
         Debug.Log("Check connected devices: " + Gamepad.all.Count);
@@ -44,19 +44,20 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        SetupMovement();
-        SetupDirection();
+        //SetupMovement();
+        //SetupDirection();
+        Gamepad.current.leftStick.ReadValue();
     }
 
     private void FixedUpdate()
     {
-        if (_gamepad == null) return;
+        //if (_gamepad == null) return;
         FixedMove();
     }
 
     #endregion
-    
-    
+
+
     #region Main
 
     private void FixedMove()
@@ -71,7 +72,22 @@ public class PlayerController : MonoBehaviour
         _inputMove.Normalize();
     }
 
+    public void OnMovement(InputAction.CallbackContext callbackContext)
+    {
 
+        _inputMove = callbackContext.ReadValue<Vector2>();
+        _inputMove.Normalize();
+    }
+
+    public void OnAiming(InputAction.CallbackContext callbackContext)
+    {
+        Vector2 rightStick = callbackContext.ReadValue<Vector2>();
+        Debug.Log(rightStick);
+
+        Vector3 direction = _transform.position + new Vector3(rightStick.x, rightStick.y, 0);
+
+        _transform.LookAt(direction, Vector3.forward);
+    }
 
     private void SetupDirection()
     {
