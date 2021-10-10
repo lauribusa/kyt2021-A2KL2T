@@ -23,8 +23,12 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     private GameObject _particleDeathPrefab;
-
+    [SerializeField]
+    private GameObject _graphics;
     public OnPlayerCollision onPlayerCollision;
+
+    [HideInInspector]
+    public int _playerIndex;
 
     #endregion
 
@@ -34,16 +38,21 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private PlayerInput inputActions;
     private Rigidbody2D _rigidbody;
-    private Transform _transform;
+    public Transform _transform;
     private Vector2 _inputMove;
     private float _currentSpeed;
     private Vector2 _currentDirection;
+    public SpriteRenderer spriteRenderer;
     private bool _hasParried { get; set; }
     private bool _isShieldUp { get; set; }
     private bool _isParrying { get; set; }
     private bool _isOnCooldown { get; set; }
     private bool _isInvincible { get; set; }
-    private PlayerFaction _playerFaction { get; set; }
+    private bool _isDead { get; set; }
+
+    [SerializeField]
+    private Collider2D myCollider;
+    public PlayerFaction _playerFaction { get; set; }
 
     private float _parryingTimeReference { get; set; }
     private float _cooldownTimeReference { get; set; }
@@ -73,6 +82,13 @@ public class PlayerController : MonoBehaviour
 
     #region Main
 
+    public PlayerController InitPlayer(int index, PlayerFaction newFaction)
+    {
+        SetFaction(newFaction);
+        _playerIndex = index;
+        return this;
+    }
+
     public void SetFaction(PlayerFaction faction)
     {
         _playerFaction = faction;
@@ -86,7 +102,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnMovement(InputAction.CallbackContext callbackContext)
     {
-        if (_isParrying)
+        if (_isParrying || _isDead || GameManager.I.isPaused)
         {
             _inputMove = Vector2.zero;
             return;
@@ -109,6 +125,35 @@ public class PlayerController : MonoBehaviour
         _currentSpeed = _speed;
     }
 
+    private void SetSelfActive(bool active)
+    {
+
+        Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
+        _graphics.SetActive(active);
+        myCollider.gameObject.SetActive(active);
+    }
+
+    public IEnumerator WhileRespawning(float respawnTime)
+    {
+        _isDead = true;
+        SetSelfActive(false);
+        float elapsed = 0.0f;
+        while (elapsed < respawnTime)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        _isDead = false;
+        SetSelfActive(true);
+        GameManager.I.InvokePlayerRespawn(this);
+        yield break;
+    }
+
+    public void RespawnSelf(float respawnTime)
+    {
+        StartCoroutine(WhileRespawning(respawnTime));
+    }
+
     public IEnumerator WhileParrying(float time, float cooldownTime)
     {
         _shield.GetComponent<Collider2D>().isTrigger = true;
@@ -117,7 +162,6 @@ public class PlayerController : MonoBehaviour
         float elapsed = 0.0f;
         while (elapsed < time)
         {
-            //Debug.Log("Still in loop");
             elapsed += Time.deltaTime;
             yield return null;
         }
@@ -139,14 +183,13 @@ public class PlayerController : MonoBehaviour
 
     public void OnTriggerParry(InputAction.CallbackContext callbackContext)
     {
-        if (!_isShieldUp) return;
+        if (!_isShieldUp || _isDead || GameManager.I.isPaused) return;
         StartCoroutine(WhileParrying(_parryingTimeReference, _cooldownTimeReference));
     }
 
     public void OnAiming(InputAction.CallbackContext callbackContext)
     {
-        if (_isOnCooldown) return;
-        if (_isParrying) return;
+        if (_isParrying || _isOnCooldown || _isDead || GameManager.I.isPaused) return;
         Vector2 rightStick = callbackContext.ReadValue<Vector2>();
 
         if(rightStick != Vector2.zero)
@@ -181,7 +224,7 @@ public class PlayerController : MonoBehaviour
         {
             BallController ballController = collider.gameObject.GetComponent<BallController>();
             ballController.ballRigidbody.position = _shield.transform.position + _shield.transform.up * 1.5f;
-            ballController.ParryBall(_shield.transform.up);
+            ballController.ParryBall(_shield.transform.right);
             _hasParried = true;
         }
         if (colliderType == PlayerColliderType.Hitbox && collider.gameObject.layer == 3)

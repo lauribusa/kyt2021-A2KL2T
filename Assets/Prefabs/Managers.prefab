@@ -54,12 +54,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1234268952458666534}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
-        m_Mode: 1
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: OnPlayerJoin
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -79,7 +79,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
     m_Reference: {fileID: 0}
-  m_PlayerPrefab: {fileID: 0}
+  m_PlayerPrefab: {fileID: 6860818231822041139, guid: 29503d7f3dd75b73198d1ef58bf2032e, type: 3}
   m_SplitScreen: 0
   m_MaintainAspectRatioInSplitScreen: 0
   m_FixedNumberOfSplitScreens: -1
@@ -102,7 +102,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameData: {fileID: 11400000, guid: 099603c03569fa04eae95c9bdd54e97b, type: 2}
+  textMeshPro: {fileID: 0}
+  redScore: {fileID: 0}
+  blueScore: {fileID: 0}
+  timer: {fileID: 0}
   parryingTime: 0
+  cooldownTime: 0
+  isPaused: 0
+  playerSprites:
+  - {fileID: 21300000, guid: 7cb11fcc4671f354a8d0c4270d25fb52, type: 3}
+  - {fileID: 21300000, guid: b3960ecc083f40244868a27a8580a5bb, type: 3}
+  - {fileID: 21300000, guid: e8d4464b603c16b469a7b51679a953a5, type: 3}
+  - {fileID: 21300000, guid: 76d62994ead7c2347b611c43e3a15bea, type: 3}
+  _ballPrefab: {fileID: 4090319710251167935, guid: fbd58d131d107234a902050cd15ce704, type: 3}
   onPlayerDead:
     m_PersistentCalls:
       m_Calls:
