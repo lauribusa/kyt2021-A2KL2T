@@ -6,11 +6,25 @@ using System;
 [System.Serializable]
 public class OnPlayerDead : UnityEvent<PlayerController>{}
 
+public enum PlayerFaction
+{
+    Blue,
+    Red
+}
+
 public class GameManager : MonoBehaviour
 {
+
+    #region Exposed
+    public GameData gameData;
+    [HideInInspector]
+    public float parryingTime;
+
+    #endregion
     #region Private And Protected
 
     private GameManager _instance;
+    private PlayerInput[] players;
 
     #endregion
 
@@ -18,6 +32,8 @@ public class GameManager : MonoBehaviour
     #region Events
 
     public OnPlayerDead onPlayerDead;
+    public UnityEvent onGameStart;
+    public UnityEvent onRoundStart;
 
     #endregion
 
@@ -26,16 +42,15 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        InitGameData();
         CheckForDuplicate();
         onPlayerDead.AddListener(HandleOnPlayerDead);
     }
 
-    private void Instance_onPlayerJoined(UnityEngine.InputSystem.PlayerInput obj)
+    private void InitGameData()
     {
-        throw new System.NotImplementedException();
+        parryingTime = gameData.parryingTime;
     }
-
-
 
     #endregion
 
@@ -61,17 +76,7 @@ public class GameManager : MonoBehaviour
         Destroy(player.gameObject);
     }
 
-    public Action<PlayerInput> OnPlayerJoined(Action<PlayerInput> playerInput)
-    {
-        return null;
-    }
-
     public void OnPlayerJoin(PlayerInput test)
-    {
-
-    }
-
-    public void onjoin()
     {
 
     }
