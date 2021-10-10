@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
     public OnPlayerDead onPlayerDead;
     public UnityEvent onGameStart;
     public UnityEvent onRoundStart;
+    public UnityEvent onBallHitShield;
 
     #endregion
 

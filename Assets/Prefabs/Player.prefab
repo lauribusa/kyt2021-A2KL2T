@@ -227,6 +227,7 @@ MonoBehaviour:
   _speed: 500
   _speedWithShield: 250
   _shield: {fileID: 360742286270107916}
+  _particleDeathPrefab: {fileID: 2564452671158033872, guid: 684f6151d5280234db0b4cb531ed992a, type: 3}
   onPlayerCollision:
     m_PersistentCalls:
       m_Calls:
