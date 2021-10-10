@@ -15,25 +15,24 @@ public class PlayerColliderController : MonoBehaviour
     public PlayerColliderType playerColliderType;
 
     [SerializeField]
-    private Collider2D playerCollider;
-
-    [SerializeField]
     private PlayerController playerMovement;
+    #endregion
 
-	#endregion
 
-	
-	#region Unity API
+    #region Private And Protected
+
+    #endregion
+
+
+    #region Unity API
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        playerMovement.onPlayerCollision.Invoke(collider, playerColliderType);
+    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        playerMovement.onPlayerCollision?.Invoke(playerCollider, collision, playerColliderType);
-    }
-
-    private void OnTriggerEnter2D(Collider2D collider)
-    {
-        if (collider.gameObject.layer != 3) return;
-        playerMovement.onPlayerTrigger?.Invoke(playerCollider, playerColliderType);
+        playerMovement.onPlayerCollision?.Invoke(collision.collider, playerColliderType);
     }
 
     #endregion
