@@ -245,6 +245,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   _playerIndex: 0
+  _transform: {fileID: 6860818231822041164}
   myCollider: {fileID: 8059459321204930634}
 --- !u!114 &4317631494552716366
 MonoBehaviour:

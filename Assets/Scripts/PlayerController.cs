@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private PlayerInput inputActions;
     private Rigidbody2D _rigidbody;
-    private Transform _transform;
+    public Transform _transform;
     private Vector2 _inputMove;
     private float _currentSpeed;
     private Vector2 _currentDirection;

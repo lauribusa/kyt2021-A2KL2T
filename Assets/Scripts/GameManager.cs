@@ -208,6 +208,7 @@ public class GameManager : MonoBehaviour
     public void OnPlayerJoin(UnityEngine.InputSystem.PlayerInput player)
     {
         PlayerController currentPlayer = player.GetComponent<PlayerController>();
+        currentPlayer.SetFaction(player.playerIndex == 0 || player.playerIndex == 2 ? PlayerFaction.Blue : PlayerFaction.Red);
         players.Add(player.gameObject);
         HandleOnPlayerRespawn(currentPlayer);
     }
