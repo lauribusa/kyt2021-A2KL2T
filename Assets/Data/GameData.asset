@@ -15,7 +15,7 @@ MonoBehaviour:
   initialTimer: 0
   parryingTime: 0.5
   cooldownTime: 0.3
-  maxPlayers: 1
+  maxPlayers: 4
   scoreToWin: 5
   respawnTime: 3
   maps:
