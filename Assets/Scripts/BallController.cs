@@ -14,7 +14,6 @@ public enum VelocityCollisionMode
     public MeshRenderer ballRenderer;
     public CircleCollider2D ballCollider;
     public Rigidbody2D ballRigidbody;
-    public Vector2 initialImpulse;
 
     [Tooltip("Velocity should increment or decrement on collision")]
     public VelocityCollisionMode velocityCollisionMode;
@@ -45,7 +44,10 @@ public enum VelocityCollisionMode
 	
     private void Start()
     {
-        ballRigidbody.AddForce(initialImpulse, ForceMode2D.Impulse);
+        Vector2 randomImpulse = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
+        randomImpulse.Normalize();
+
+        ballRigidbody.AddForce(randomImpulse * 5, ForceMode2D.Impulse);
         ballVelocityMagnitude = ballCollider.attachedRigidbody.velocity.magnitude;
 
         _mainMusic = Camera.main.GetComponent<audio_script>();
