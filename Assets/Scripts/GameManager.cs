@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class OnPlayerDead : UnityEvent<PlayerController>{}
@@ -30,19 +31,25 @@ public class GameManager : MonoBehaviour
     public float parryingTime;
     [HideInInspector]
     public float cooldownTime;
+    public bool isPaused;
 
 
     #endregion
     #region Private And Protected
 
+    [SerializeField]
+    private GameObject _ballPrefab;
     private GameManager _instance;
     private bool _allPlayersJoined = false;
+    private bool _roundStarted = false;
     private List<GameObject> players = new List<GameObject>();
     private int blueFactionScore = 0;
     private int redFactionScore = 0;
     private IEnumerator respawner;
     private SpawnerEntity[] spawners;
-    private UnityEvent<PlayerController> onPlayerRespawn;
+    private int _currentMapIndex = 0;
+    private GameObject _currentMap;
+    private UnityEvent<PlayerController> onPlayerRespawn = new UnityEvent<PlayerController>();
 
     #endregion
 
@@ -72,14 +79,20 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if(!_allPlayersJoined && players.Count == gameData.maxPlayers)
+        if(!_allPlayersJoined && players.Count == gameData.maxPlayers && !_roundStarted)
         {
            RoundStart();
+
         }
 
         if(redFactionScore == gameData.scoreToWin || blueFactionScore == gameData.scoreToWin)
         {
-            GameEnd(redFactionScore == gameData.scoreToWin ? PlayerFaction.Red : PlayerFaction.Blue);
+            if(_currentMapIndex >= gameData.maps.Length)
+            {
+                GameEnd(redFactionScore == gameData.scoreToWin ? PlayerFaction.Red : PlayerFaction.Blue);
+            }
+            _currentMapIndex++;
+            
         }
     }
 
@@ -96,19 +109,58 @@ public class GameManager : MonoBehaviour
 
     private void GameEnd(PlayerFaction winner)
     {
-
+        // load winner screen
+        Gamepad.current.aButton.ReadValue();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private void SpawnMap(int mapIndex)
     {
-        GameObject map = gameData.maps[mapIndex];
-        spawners = map.GetComponentsInChildren<SpawnerEntity>();
-        Instantiate(map, new Vector3(0,0,1), Quaternion.identity);
+        _currentMap = gameData.maps[mapIndex];
+        spawners = _currentMap.GetComponentsInChildren<SpawnerEntity>();
+        Instantiate(_currentMap, new Vector3(0,0,1), Quaternion.identity);
+    }
+
+    public IEnumerator LaunchingBall(float launchTimer)
+    {
+        float elapsed = 0.0f;
+        while(elapsed < launchTimer)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+     
+        yield break;
+    }
+
+    public void LaunchBall(SpawnerEntity ballSpawner)
+    {
+        Instantiate(_ballPrefab, ballSpawner.transform.position, Quaternion.identity);
     }
 
     public void RoundStart()
     {
-    
+        SpawnMap(_currentMapIndex);
+        foreach (var player in players)
+        {
+            PlayerController playerObject = player.GetComponent<PlayerController>();
+            foreach (var spawner in spawners)
+            {
+                if ((int)spawner.spawnerMode == playerObject._playerIndex)
+                {
+                    player.transform.position = new Vector3(spawner.gameObject.transform.position.x, spawner.gameObject.transform.position.y, player.transform.position.z);
+                }
+            }
+        }
+        _roundStarted = true;
+        isPaused = false;
+        foreach (SpawnerEntity spawner in spawners)
+        {
+            if (spawner.spawnerMode == SpawnerMode.Ball)
+            {
+                LaunchBall(spawner);
+            }
+        }
     }
 
     public void CheckForDuplicate()
@@ -142,14 +194,22 @@ public class GameManager : MonoBehaviour
 
     private void HandleOnPlayerDead(PlayerController player)
     {
+        if (player._playerFaction == PlayerFaction.Blue)
+        {
+            redFactionScore++;
+        }
+        if (player._playerFaction == PlayerFaction.Red)
+        {
+            blueFactionScore++;
+        }
         player.RespawnSelf(gameData.respawnTime);
     }
 
     public void OnPlayerJoin(UnityEngine.InputSystem.PlayerInput player)
     {
-        player.GetComponent<PlayerController>();
+        PlayerController currentPlayer = player.GetComponent<PlayerController>();
         players.Add(player.gameObject);
-        
+        HandleOnPlayerRespawn(currentPlayer);
     }
 
     #endregion

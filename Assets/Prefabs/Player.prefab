@@ -228,6 +228,7 @@ MonoBehaviour:
   _speedWithShield: 250
   _shield: {fileID: 360742286270107916}
   _particleDeathPrefab: {fileID: 2564452671158033872, guid: 684f6151d5280234db0b4cb531ed992a, type: 3}
+  _graphics: {fileID: 6860818231148582877}
   onPlayerCollision:
     m_PersistentCalls:
       m_Calls:
@@ -243,6 +244,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  _playerIndex: 0
+  myCollider: {fileID: 8059459321204930634}
 --- !u!114 &4317631494552716366
 MonoBehaviour:
   m_ObjectHideFlags: 0

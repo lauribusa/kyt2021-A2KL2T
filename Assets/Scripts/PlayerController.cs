@@ -23,7 +23,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     private GameObject _particleDeathPrefab;
-
+    [SerializeField]
+    private GameObject _graphics;
     public OnPlayerCollision onPlayerCollision;
 
     [HideInInspector]
@@ -47,7 +48,10 @@ public class PlayerController : MonoBehaviour
     private bool _isOnCooldown { get; set; }
     private bool _isInvincible { get; set; }
     private bool _isDead { get; set; }
-    private PlayerFaction _playerFaction { get; set; }
+
+    [SerializeField]
+    private Collider2D myCollider;
+    public PlayerFaction _playerFaction { get; set; }
 
     private float _parryingTimeReference { get; set; }
     private float _cooldownTimeReference { get; set; }
@@ -97,7 +101,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnMovement(InputAction.CallbackContext callbackContext)
     {
-        if (_isParrying || _isDead)
+        if (_isParrying || _isDead || GameManager.I.isPaused)
         {
             _inputMove = Vector2.zero;
             return;
@@ -120,9 +124,18 @@ public class PlayerController : MonoBehaviour
         _currentSpeed = _speed;
     }
 
+    private void SetSelfActive(bool active)
+    {
+
+        Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
+        _graphics.SetActive(active);
+        myCollider.gameObject.SetActive(active);
+    }
+
     public IEnumerator WhileRespawning(float respawnTime)
     {
         _isDead = true;
+        SetSelfActive(false);
         float elapsed = 0.0f;
         while (elapsed < respawnTime)
         {
@@ -130,6 +143,7 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         _isDead = false;
+        SetSelfActive(true);
         GameManager.I.InvokePlayerRespawn(this);
         yield break;
     }
@@ -147,7 +161,6 @@ public class PlayerController : MonoBehaviour
         float elapsed = 0.0f;
         while (elapsed < time)
         {
-            //Debug.Log("Still in loop");
             elapsed += Time.deltaTime;
             yield return null;
         }
@@ -169,13 +182,13 @@ public class PlayerController : MonoBehaviour
 
     public void OnTriggerParry(InputAction.CallbackContext callbackContext)
     {
-        if (!_isShieldUp || _isDead) return;
+        if (!_isShieldUp || _isDead || GameManager.I.isPaused) return;
         StartCoroutine(WhileParrying(_parryingTimeReference, _cooldownTimeReference));
     }
 
     public void OnAiming(InputAction.CallbackContext callbackContext)
     {
-        if (_isParrying || _isOnCooldown || _isDead) return;
+        if (_isParrying || _isOnCooldown || _isDead || GameManager.I.isPaused) return;
         Vector2 rightStick = callbackContext.ReadValue<Vector2>();
 
         if(rightStick != Vector2.zero)
