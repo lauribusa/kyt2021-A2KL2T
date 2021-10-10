@@ -11,7 +11,9 @@ public enum PlayerColliderType
 public class PlayerColliderController : MonoBehaviour
 {
     #region Exposed
+
     public PlayerColliderType playerColliderType;
+
     [SerializeField]
     private PlayerController playerMovement;
     #endregion
@@ -25,16 +27,13 @@ public class PlayerColliderController : MonoBehaviour
     #region Unity API
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        Debug.Log("trigger entered");
         playerMovement.onPlayerCollision.Invoke(collider, playerColliderType);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        playerMovement.onPlayerCollision.Invoke(collision.collider, playerColliderType);
+        playerMovement.onPlayerCollision?.Invoke(collision.collider, playerColliderType);
     }
 
     #endregion
-
 }
-

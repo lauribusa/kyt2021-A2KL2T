@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 [System.Serializable]
 public class OnPlayerCollision : UnityEvent<Collider2D, PlayerColliderType> { }
 
+
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
@@ -176,6 +177,10 @@ public class PlayerController : MonoBehaviour
             ballController.ballRigidbody.position = _shield.transform.position + _shield.transform.up * 1.5f;
             ballController.ParryBall(_shield.transform.up);
             _hasParried = true;
+        }
+        if (colliderType == PlayerColliderType.Hitbox && collider.gameObject.layer == 3)
+        {
+            HandleDeath();
         }
         if (colliderType == PlayerColliderType.Hitbox && collider.gameObject.layer == 7 && !_isInvincible)
         {
