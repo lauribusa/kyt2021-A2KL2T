@@ -3,7 +3,10 @@ using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 [System.Serializable]
-public class OnPlayerCollision : UnityEvent<Collider2D, Collision2D, PlayerColliderType> { }
+public class OnPlayerCollision : UnityEvent<Collider2D, Collision2D, PlayerColliderType>{}
+
+[System.Serializable]
+public class OnPlayerTrigger : UnityEvent<Collider2D, PlayerColliderType>{}
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
@@ -20,6 +23,7 @@ public class PlayerController : MonoBehaviour
     private GameObject _shield;
 
     public OnPlayerCollision onPlayerCollision;
+    public OnPlayerTrigger onPlayerTrigger;
 
     #endregion
 
@@ -45,6 +49,7 @@ public class PlayerController : MonoBehaviour
         if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody2D>();
         if (_transform == null) _transform = GetComponent<Transform>();
         onPlayerCollision.AddListener(HandleOnPlayerCollision);
+        onPlayerTrigger.AddListener(HandleOnPlayerTrigger);
     }
 
     private void FixedUpdate()
@@ -114,6 +119,15 @@ public class PlayerController : MonoBehaviour
     private void HandleOnPlayerCollision(Collider2D collider, Collision2D collision, PlayerColliderType colliderType)
     {
         if (colliderType == PlayerColliderType.Hitbox && collision.collider.gameObject.layer == 7)
+        {
+            HandleDeath();
+        }
+    }
+
+    [SerializeField]
+    private void HandleOnPlayerTrigger(Collider2D collider, PlayerColliderType colliderType)
+    {
+        if (colliderType == PlayerColliderType.Hitbox)
         {
             HandleDeath();
         }
