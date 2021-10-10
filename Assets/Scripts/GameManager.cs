@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 [System.Serializable]
 public class OnPlayerDead : UnityEvent<PlayerController>{}
@@ -19,12 +21,15 @@ public class GameManager : MonoBehaviour
     public GameData gameData;
     [HideInInspector]
     public float parryingTime;
+    [HideInInspector]
+    public float cooldownTime;
 
     #endregion
     #region Private And Protected
 
     private GameManager _instance;
-    private PlayerInput[] players;
+    private bool _allPlayersJoined;
+    private List<UnityEngine.InputSystem.PlayerInput> players;
 
     #endregion
 
@@ -45,17 +50,37 @@ public class GameManager : MonoBehaviour
         InitGameData();
         CheckForDuplicate();
         onPlayerDead.AddListener(HandleOnPlayerDead);
+        SpawnMap(0);
+    }
+
+    private void Update()
+    {
+        if(!_allPlayersJoined && players.Count == gameData.maxPlayers)
+        {
+            RoundStart();
+        }
     }
 
     private void InitGameData()
     {
         parryingTime = gameData.parryingTime;
+        cooldownTime = gameData.cooldownTime;
     }
 
     #endregion
 
 
     #region Main
+
+    private void SpawnMap(int mapIndex)
+    {
+        GameObject map = gameData.maps[mapIndex];
+    }
+
+    public void RoundStart()
+    {
+
+    }
 
     public void CheckForDuplicate()
     {
@@ -76,9 +101,9 @@ public class GameManager : MonoBehaviour
         Destroy(player.gameObject);
     }
 
-    public void OnPlayerJoin(PlayerInput test)
+    public void OnPlayerJoin(UnityEngine.InputSystem.PlayerInput player)
     {
-
+        Debug.Log(player.playerIndex);
     }
 
     #endregion

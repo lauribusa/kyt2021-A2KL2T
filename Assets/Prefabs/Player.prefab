@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5353698100219730484
 Transform:
   m_ObjectHideFlags: 0
@@ -227,7 +227,6 @@ MonoBehaviour:
   _speed: 500
   _speedWithShield: 250
   _shield: {fileID: 360742286270107916}
-  _playerCollider: {fileID: 8059459321204930634}
   onPlayerCollision:
     m_PersistentCalls:
       m_Calls:
