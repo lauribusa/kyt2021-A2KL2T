@@ -123,7 +123,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerColliderType: 1
-  playerCollider: {fileID: 0}
   playerMovement: {fileID: 1192854440564568989}
 --- !u!1 &6860818231148582877
 GameObject:
@@ -228,6 +227,7 @@ MonoBehaviour:
   _speed: 500
   _speedWithShield: 250
   _shield: {fileID: 360742286270107916}
+  _playerCollider: {fileID: 8059459321204930634}
   onPlayerCollision:
     m_PersistentCalls:
       m_Calls:
@@ -243,9 +243,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  onPlayerTrigger:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &4317631494552716366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -451,7 +448,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerColliderType: 0
-  playerCollider: {fileID: 8059459321204930634}
   playerMovement: {fileID: 1192854440564568989}
 --- !u!58 &8059459321204930634
 CircleCollider2D:

@@ -21,8 +21,6 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     private GameObject _shield;
-    [SerializeField]
-    private Collider2D _playerCollider;
 
     public OnPlayerCollision onPlayerCollision;
 
@@ -72,6 +70,11 @@ public class PlayerController : MonoBehaviour
 
 
     #region Main
+
+    public void SetFaction(PlayerFaction faction)
+    {
+        _playerFaction = faction;
+    }
 
     private void FixedMove()
     {
@@ -134,7 +137,6 @@ public class PlayerController : MonoBehaviour
 
     public void OnTriggerParry(InputAction.CallbackContext callbackContext)
     {
-        Debug.Log("Triggered");
         if (!_isShieldUp) return;
         StartCoroutine(WhileParrying(_parryingTimeReference, _cooldownTimeReference));
     }
@@ -160,7 +162,6 @@ public class PlayerController : MonoBehaviour
 
     }
 
-
     private void HandleDeath()
     {
         GameManager.I.onPlayerDead?.Invoke(this);
@@ -169,10 +170,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private void HandleOnPlayerCollision(Collider2D collider, PlayerColliderType colliderType)
     {
-        Debug.Log(" " + _isParrying + _hasParried);
         if (colliderType == PlayerColliderType.Shield && collider.gameObject.layer == 7 && _isParrying && !_hasParried)
         {
-            Debug.Log("Parry condition fulfilled");
             BallController ballController = collider.gameObject.GetComponent<BallController>();
             ballController.ballRigidbody.position = _shield.transform.position + _shield.transform.up * 1.5f;
             ballController.ParryBall(_shield.transform.up);
@@ -184,7 +183,6 @@ public class PlayerController : MonoBehaviour
         }
         if (colliderType == PlayerColliderType.Hitbox && collider.gameObject.layer == 7 && !_isInvincible)
         {
-            Debug.Log("Triggered death");
             HandleDeath();
         }
     }
