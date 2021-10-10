@@ -3,7 +3,9 @@ guid: 6aa0d35de22f941c2a1675e14f19dbb5
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - _shield: {instanceID: 0}
+  - _particleDeathPrefab: {fileID: 2564452671158033872, guid: 684f6151d5280234db0b4cb531ed992a, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -6,6 +6,9 @@ using System;
 [System.Serializable]
 public class OnPlayerDead : UnityEvent<PlayerController>{}
 
+[System.Serializable]
+public class OnBallHitShield : UnityEvent{}
+
 public class GameManager : MonoBehaviour
 {
     #region Private And Protected
@@ -18,6 +21,7 @@ public class GameManager : MonoBehaviour
     #region Events
 
     public OnPlayerDead onPlayerDead;
+    public OnBallHitShield OnBallHitShield;
 
     #endregion
 
@@ -34,8 +38,6 @@ public class GameManager : MonoBehaviour
     {
         throw new System.NotImplementedException();
     }
-
-
 
     #endregion
 
@@ -59,6 +61,11 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Player is dead: " + player);
         Destroy(player.gameObject);
+    }
+
+    private void HandleOnBallHitShield()
+    {
+        Debug.Log("hit shield");
     }
 
     public Action<PlayerInput> OnPlayerJoined(Action<PlayerInput> playerInput)

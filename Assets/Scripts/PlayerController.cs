@@ -22,6 +22,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private GameObject _shield;
 
+    [SerializeField]
+    private GameObject _particleDeathPrefab;
+
     public OnPlayerCollision onPlayerCollision;
     public OnPlayerTrigger onPlayerTrigger;
 
@@ -106,19 +109,27 @@ public class PlayerController : MonoBehaviour
         Vector3 direction = _transform.position + new Vector3(rightStick.x, rightStick.y, 0);
 
         _transform.LookAt(direction, Vector3.forward);
-
     }
-
 
     private void HandleDeath()
     {
+        Instantiate(_particleDeathPrefab, _transform.position, Quaternion.identity);
         GameManager.I.onPlayerDead?.Invoke(this);
+    }
+
+    private void HandleShieldHit()
+    {
+        GameManager.I.OnBallHitShield?.Invoke();
     }
 
     [SerializeField]
     private void HandleOnPlayerCollision(Collider2D collider, Collision2D collision, PlayerColliderType colliderType)
     {
-        if (colliderType == PlayerColliderType.Hitbox && collision.collider.gameObject.layer == 7)
+        if (colliderType == PlayerColliderType.Shield)
+        {
+            HandleShieldHit();
+        }
+        else if (colliderType == PlayerColliderType.Hitbox && collision.collider.gameObject.layer == 7)
         {
             HandleDeath();
         }
