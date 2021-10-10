@@ -548,7 +548,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ac499b8a3e42784b92e350885acd508, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameData: {fileID: 0}
+  parryingTime: 0
   onPlayerDead:
+    m_PersistentCalls:
+      m_Calls: []
+  onGameStart:
+    m_PersistentCalls:
+      m_Calls: []
+  onRoundStart:
+    m_PersistentCalls:
+      m_Calls: []
+  onBallHitShield:
     m_PersistentCalls:
       m_Calls: []
 --- !u!4 &1651944897
