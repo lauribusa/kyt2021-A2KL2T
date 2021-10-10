@@ -80,6 +80,11 @@ public class PlayerController : MonoBehaviour
 
     public void OnMovement(InputAction.CallbackContext callbackContext)
     {
+        if (_isParrying)
+        {
+            _inputMove = Vector2.zero;
+            return;
+        }
         _inputMove = callbackContext.ReadValue<Vector2>();
         _inputMove.Normalize();
     }
