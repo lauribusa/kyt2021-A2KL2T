@@ -72,9 +72,11 @@ public enum VelocityCollisionMode
         if (ballVelocityMagnitude <= 0) ballVelocityMagnitude = 0;
     }
 
-    private void ReflectBall(Collision2D collision)
+    public void ParryBall(Vector2 newDirection)
     {
-        ballVelocityMagnitude += 1;
+        Debug.Log("Has been parried");
+        ballRigidbody.velocity = Vector2.zero;
+        ballRigidbody.velocity = newDirection * ballVelocityMagnitude;
         // KEEP FOR PLAYER REFLECT FUNCTION
         //Vector2 avgNormal = Vector2.zero;
         //for (int i = 0; i < collision.contactCount; i++)

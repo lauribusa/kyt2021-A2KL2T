@@ -34,6 +34,9 @@ public class PlayerController : MonoBehaviour
     private Transform _transform;
     private Vector2 _inputMove;
     private float _currentSpeed;
+    private Vector2 _currentDirection;
+    private bool _hasParried { get; set; }
+    private bool _isShieldUp { get; set; }
     private bool _isParrying { get; set; }
     private PlayerFaction _playerFaction { get; set; }
 
@@ -77,12 +80,14 @@ public class PlayerController : MonoBehaviour
 
     private void EnableShield()
     {
+        _isShieldUp = true;
         _currentSpeed = _speedWithShield;
         _shield.SetActive(true);
     }
 
     private void DisableShield()
     {
+        _isShieldUp = false;
         _shield.SetActive(false);
         _currentSpeed = _speed;
     }
@@ -98,16 +103,20 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         _isParrying = false;
+        _hasParried = false;
         yield break;
     }
 
-    private void OnTriggerParry(InputAction.CallbackContext callbackContext)
+    public void OnTriggerParry(InputAction.CallbackContext callbackContext)
     {
+        Debug.Log("Triggered");
+        if (!_isShieldUp) return;
         StartCoroutine(WhileParrying(parryingTimeReference));
     }
 
     public void OnAiming(InputAction.CallbackContext callbackContext)
     {
+        if (_isParrying) return;
         Vector2 rightStick = callbackContext.ReadValue<Vector2>();
 
         if(rightStick != Vector2.zero)
@@ -120,6 +129,7 @@ public class PlayerController : MonoBehaviour
 
         Vector3 direction = _transform.position + new Vector3(rightStick.x, rightStick.y, 0);
 
+        _currentDirection = direction;
         _transform.LookAt(direction, Vector3.forward);
 
     }
@@ -133,8 +143,16 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private void HandleOnPlayerCollision(Collider2D collider, Collision2D collision, PlayerColliderType colliderType)
     {
+        Debug.Log("" + (colliderType == PlayerColliderType.Shield) + (collision.collider.gameObject.layer == 7) + _isParrying + !_hasParried);
+        if (colliderType == PlayerColliderType.Shield && collision.collider.gameObject.layer == 7 && _isParrying && !_hasParried)
+        {
+            Debug.Log("Parry condition fulfilled");
+            collision.rigidbody.gameObject.GetComponent<BallController>().ParryBall(_currentDirection);
+            _hasParried = true;
+        }
         if (colliderType == PlayerColliderType.Hitbox && collision.collider.gameObject.layer == 7)
         {
+            Debug.Log("Triggered death");
             HandleDeath();
         }
     }
