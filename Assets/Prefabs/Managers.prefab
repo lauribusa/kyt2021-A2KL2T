@@ -102,9 +102,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameData: {fileID: 11400000, guid: 099603c03569fa04eae95c9bdd54e97b, type: 2}
+  textMeshPro: {fileID: 0}
+  redScore: {fileID: 0}
+  blueScore: {fileID: 0}
+  timer: {fileID: 0}
   parryingTime: 0
   cooldownTime: 0
   isPaused: 0
+  playerSprites:
+  - {fileID: 21300000, guid: 7cb11fcc4671f354a8d0c4270d25fb52, type: 3}
+  - {fileID: 21300000, guid: b3960ecc083f40244868a27a8580a5bb, type: 3}
+  - {fileID: 21300000, guid: e8d4464b603c16b469a7b51679a953a5, type: 3}
+  - {fileID: 21300000, guid: 76d62994ead7c2347b611c43e3a15bea, type: 3}
   _ballPrefab: {fileID: 4090319710251167935, guid: fbd58d131d107234a902050cd15ce704, type: 3}
   onPlayerDead:
     m_PersistentCalls:

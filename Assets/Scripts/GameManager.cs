@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 [System.Serializable]
 public class OnPlayerDead : UnityEvent<PlayerController>{}
@@ -27,11 +28,16 @@ public class GameManager : MonoBehaviour
 
     #region Exposed
     public GameData gameData;
+    public TextMeshProUGUI textMeshPro;
+    public TextMeshProUGUI redScore;
+    public TextMeshProUGUI blueScore;
+    public TextMeshProUGUI timer;
     [HideInInspector]
     public float parryingTime;
     [HideInInspector]
     public float cooldownTime;
     public bool isPaused;
+    public Sprite[] playerSprites;
 
 
     #endregion
@@ -89,7 +95,7 @@ public class GameManager : MonoBehaviour
         {
             if(_currentMapIndex >= gameData.maps.Length)
             {
-                GameEnd(redFactionScore == gameData.scoreToWin ? PlayerFaction.Red : PlayerFaction.Blue);
+                GameEnd(redFactionScore >= gameData.scoreToWin ? PlayerFaction.Red : PlayerFaction.Blue);
             }
             _currentMapIndex++;
             
@@ -107,11 +113,23 @@ public class GameManager : MonoBehaviour
 
     #region Main
 
+    private IEnumerator ReloadTimer()
+    {
+        float max = 5;
+        float elapsed = 0.0f;
+        while (elapsed < max)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
     private void GameEnd(PlayerFaction winner)
     {
         // load winner screen
-        Gamepad.current.aButton.ReadValue();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        textMeshPro.text = winner == PlayerFaction.Blue ? "BLUE WINS" : "RED WINS";
+        StartCoroutine(ReloadTimer());
     }
 
     private void SpawnMap(int mapIndex)
@@ -121,15 +139,25 @@ public class GameManager : MonoBehaviour
         Instantiate(_currentMap, new Vector3(0,0,1), Quaternion.identity);
     }
 
-    public IEnumerator LaunchingBall(float launchTimer)
+    public IEnumerator StartTimer()
     {
         float elapsed = 0.0f;
-        while(elapsed < launchTimer)
+        while(elapsed < gameData.initialTimer)
         {
             elapsed += Time.deltaTime;
+            float timeLeft = gameData.initialTimer - elapsed;
+            timer.text = Mathf.RoundToInt(timeLeft).ToString();
             yield return null;
         }
-     
+
+        if(redFactionScore > blueFactionScore)
+        {
+            GameEnd(PlayerFaction.Red);
+        } else
+        {
+            GameEnd(PlayerFaction.Blue);
+        }
+        
         yield break;
     }
 
@@ -141,6 +169,8 @@ public class GameManager : MonoBehaviour
     public void RoundStart()
     {
         SpawnMap(_currentMapIndex);
+        StartCoroutine(StartTimer());
+        textMeshPro.text = "";
         foreach (var player in players)
         {
             PlayerController playerObject = player.GetComponent<PlayerController>();
@@ -197,10 +227,12 @@ public class GameManager : MonoBehaviour
         if (player._playerFaction == PlayerFaction.Blue)
         {
             redFactionScore++;
+            redScore.text = redFactionScore.ToString();
         }
         if (player._playerFaction == PlayerFaction.Red)
         {
             blueFactionScore++;
+            blueScore.text = redFactionScore.ToString();
         }
         player.RespawnSelf(gameData.respawnTime);
     }
@@ -208,7 +240,8 @@ public class GameManager : MonoBehaviour
     public void OnPlayerJoin(UnityEngine.InputSystem.PlayerInput player)
     {
         PlayerController currentPlayer = player.GetComponent<PlayerController>();
-        currentPlayer.SetFaction(player.playerIndex == 0 || player.playerIndex == 2 ? PlayerFaction.Blue : PlayerFaction.Red);
+        currentPlayer.SetFaction(player.playerIndex == 0  ? PlayerFaction.Blue : PlayerFaction.Red);
+        currentPlayer.spriteRenderer.sprite = playerSprites[player.playerIndex];
         players.Add(player.gameObject);
         HandleOnPlayerRespawn(currentPlayer);
     }

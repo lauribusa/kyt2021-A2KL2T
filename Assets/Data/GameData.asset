@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6b5f2b3b41310147b8f9d36775df489, type: 3}
   m_Name: GameData
   m_EditorClassIdentifier: 
-  initialTimer: 0
+  initialTimer: 120
   parryingTime: 0.5
   cooldownTime: 0.3
   maxPlayers: 4

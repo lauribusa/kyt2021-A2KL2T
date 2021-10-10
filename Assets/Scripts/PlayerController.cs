@@ -42,6 +42,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 _inputMove;
     private float _currentSpeed;
     private Vector2 _currentDirection;
+    public SpriteRenderer spriteRenderer;
     private bool _hasParried { get; set; }
     private bool _isShieldUp { get; set; }
     private bool _isParrying { get; set; }
@@ -223,7 +224,7 @@ public class PlayerController : MonoBehaviour
         {
             BallController ballController = collider.gameObject.GetComponent<BallController>();
             ballController.ballRigidbody.position = _shield.transform.position + _shield.transform.up * 1.5f;
-            ballController.ParryBall(_shield.transform.up);
+            ballController.ParryBall(_shield.transform.right);
             _hasParried = true;
         }
         if (colliderType == PlayerColliderType.Hitbox && collider.gameObject.layer == 3)
