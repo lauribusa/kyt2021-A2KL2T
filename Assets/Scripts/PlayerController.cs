@@ -7,7 +7,6 @@ using UnityEngine.InputSystem;
 [System.Serializable]
 public class OnPlayerCollision : UnityEvent<Collider2D, PlayerColliderType> { }
 
-
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
@@ -21,6 +20,9 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     private GameObject _shield;
+
+    [SerializeField]
+    private GameObject _particleDeathPrefab;
 
     public OnPlayerCollision onPlayerCollision;
 
@@ -159,12 +161,17 @@ public class PlayerController : MonoBehaviour
 
         _currentDirection = direction;
         _transform.LookAt(direction, Vector3.forward);
-
     }
 
     private void HandleDeath()
     {
+        Instantiate(_particleDeathPrefab, _transform.position, Quaternion.identity);
         GameManager.I.onPlayerDead?.Invoke(this);
+    }
+
+    private void HandleShieldHit()
+    {
+        GameManager.I.onBallHitShield?.Invoke();
     }
 
     [SerializeField]
@@ -184,6 +191,11 @@ public class PlayerController : MonoBehaviour
         if (colliderType == PlayerColliderType.Hitbox && collider.gameObject.layer == 7 && !_isInvincible)
         {
             HandleDeath();
+        }
+
+        if (colliderType == PlayerColliderType.Shield)
+        {
+            HandleShieldHit();
         }
     }
     

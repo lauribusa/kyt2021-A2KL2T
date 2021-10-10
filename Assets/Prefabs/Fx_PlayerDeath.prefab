@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5841698195167892839}
   - component: {fileID: 263232455116130368}
   - component: {fileID: 7840739489341591529}
+  - component: {fileID: 1420422752952750012}
   m_Layer: 0
   m_Name: Fx_PlayerDeath
   m_TagString: Untagged
@@ -40,13 +41,13 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2564452671158033872}
   serializedVersion: 7
-  lengthInSec: 5
+  lengthInSec: 1.5
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
-  looping: 1
+  looping: 0
   prewarm: 0
   playOnAwake: 1
   useUnscaledTime: 0
@@ -4862,3 +4863,15 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &1420422752952750012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2564452671158033872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c45d8fbed544fed5bca133a9397b3d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
