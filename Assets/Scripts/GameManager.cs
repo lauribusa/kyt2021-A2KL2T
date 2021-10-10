@@ -103,7 +103,7 @@ public class GameManager : MonoBehaviour
     {
         GameObject map = gameData.maps[mapIndex];
         spawners = map.GetComponentsInChildren<SpawnerEntity>();
-        Instantiate(map, Vector3.zero, Quaternion.identity);
+        Instantiate(map, new Vector3(0,0,1), Quaternion.identity);
     }
 
     public void RoundStart()
