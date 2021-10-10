@@ -26,6 +26,9 @@ public class PlayerController : MonoBehaviour
 
     public OnPlayerCollision onPlayerCollision;
 
+    [HideInInspector]
+    public int _playerIndex;
+
     #endregion
 
 
@@ -43,6 +46,7 @@ public class PlayerController : MonoBehaviour
     private bool _isParrying { get; set; }
     private bool _isOnCooldown { get; set; }
     private bool _isInvincible { get; set; }
+    private bool _isDead { get; set; }
     private PlayerFaction _playerFaction { get; set; }
 
     private float _parryingTimeReference { get; set; }
@@ -73,6 +77,13 @@ public class PlayerController : MonoBehaviour
 
     #region Main
 
+    public PlayerController InitPlayer(int index, PlayerFaction newFaction)
+    {
+        SetFaction(newFaction);
+        _playerIndex = index;
+        return this;
+    }
+
     public void SetFaction(PlayerFaction faction)
     {
         _playerFaction = faction;
@@ -86,7 +97,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnMovement(InputAction.CallbackContext callbackContext)
     {
-        if (_isParrying)
+        if (_isParrying || _isDead)
         {
             _inputMove = Vector2.zero;
             return;
@@ -107,6 +118,25 @@ public class PlayerController : MonoBehaviour
         _isShieldUp = false;
         _shield.SetActive(false);
         _currentSpeed = _speed;
+    }
+
+    public IEnumerator WhileRespawning(float respawnTime)
+    {
+        _isDead = true;
+        float elapsed = 0.0f;
+        while (elapsed < respawnTime)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        _isDead = false;
+        GameManager.I.InvokePlayerRespawn(this);
+        yield break;
+    }
+
+    public void RespawnSelf(float respawnTime)
+    {
+        StartCoroutine(WhileRespawning(respawnTime));
     }
 
     public IEnumerator WhileParrying(float time, float cooldownTime)
@@ -139,14 +169,13 @@ public class PlayerController : MonoBehaviour
 
     public void OnTriggerParry(InputAction.CallbackContext callbackContext)
     {
-        if (!_isShieldUp) return;
+        if (!_isShieldUp || _isDead) return;
         StartCoroutine(WhileParrying(_parryingTimeReference, _cooldownTimeReference));
     }
 
     public void OnAiming(InputAction.CallbackContext callbackContext)
     {
-        if (_isOnCooldown) return;
-        if (_isParrying) return;
+        if (_isParrying || _isOnCooldown || _isDead) return;
         Vector2 rightStick = callbackContext.ReadValue<Vector2>();
 
         if(rightStick != Vector2.zero)

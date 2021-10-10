@@ -14,6 +14,13 @@ public enum PlayerFaction
     Red
 }
 
+public struct PlayerInfo
+{
+    int index;
+    PlayerController playerController;
+    UnityEngine.InputSystem.PlayerInput playerInput;
+}
+
 public class GameManager : MonoBehaviour
 {
 
@@ -24,12 +31,18 @@ public class GameManager : MonoBehaviour
     [HideInInspector]
     public float cooldownTime;
 
+
     #endregion
     #region Private And Protected
 
     private GameManager _instance;
-    private bool _allPlayersJoined;
-    private List<UnityEngine.InputSystem.PlayerInput> players;
+    private bool _allPlayersJoined = false;
+    private List<GameObject> players = new List<GameObject>();
+    private int blueFactionScore = 0;
+    private int redFactionScore = 0;
+    private IEnumerator respawner;
+    private SpawnerEntity[] spawners;
+    private UnityEvent<PlayerController> onPlayerRespawn;
 
     #endregion
 
@@ -50,15 +63,23 @@ public class GameManager : MonoBehaviour
     {
         InitGameData();
         CheckForDuplicate();
-        onPlayerDead.AddListener(HandleOnPlayerDead);
         SpawnMap(0);
+        blueFactionScore = 0;
+        redFactionScore = 0;
+        onPlayerDead.AddListener(HandleOnPlayerDead);
+        onPlayerRespawn.AddListener(HandleOnPlayerRespawn);
     }
 
     private void Update()
     {
         if(!_allPlayersJoined && players.Count == gameData.maxPlayers)
         {
-            RoundStart();
+           RoundStart();
+        }
+
+        if(redFactionScore == gameData.scoreToWin || blueFactionScore == gameData.scoreToWin)
+        {
+            GameEnd(redFactionScore == gameData.scoreToWin ? PlayerFaction.Red : PlayerFaction.Blue);
         }
     }
 
@@ -73,14 +94,21 @@ public class GameManager : MonoBehaviour
 
     #region Main
 
+    private void GameEnd(PlayerFaction winner)
+    {
+
+    }
+
     private void SpawnMap(int mapIndex)
     {
         GameObject map = gameData.maps[mapIndex];
+        spawners = map.GetComponentsInChildren<SpawnerEntity>();
+        Instantiate(map, Vector3.zero, Quaternion.identity);
     }
 
     public void RoundStart()
     {
-
+    
     }
 
     public void CheckForDuplicate()
@@ -96,15 +124,32 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void InvokePlayerRespawn(PlayerController player)
+    {
+        onPlayerRespawn.Invoke(player);
+    }
+
+    private void HandleOnPlayerRespawn(PlayerController playerObject)
+    {
+        foreach (SpawnerEntity spawner in spawners)
+        {
+            if ((int)spawner.spawnerMode == playerObject._playerIndex)
+            {
+                playerObject.gameObject.transform.position = new Vector3(spawner.gameObject.transform.position.x, spawner.gameObject.transform.position.y, playerObject.gameObject.transform.position.z);
+            }
+        }
+    }
+
     private void HandleOnPlayerDead(PlayerController player)
     {
-        Debug.Log("Player is dead: " + player);
-        Destroy(player.gameObject);
+        player.RespawnSelf(gameData.respawnTime);
     }
 
     public void OnPlayerJoin(UnityEngine.InputSystem.PlayerInput player)
     {
-        Debug.Log(player.playerIndex);
+        player.GetComponent<PlayerController>();
+        players.Add(player.gameObject);
+        
     }
 
     #endregion
