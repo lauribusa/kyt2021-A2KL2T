@@ -13,4 +13,9 @@ MonoBehaviour:
   m_Name: GameData
   m_EditorClassIdentifier: 
   initialTimer: 0
-  initialMap: {fileID: 6860818231822041139, guid: 29503d7f3dd75b73198d1ef58bf2032e, type: 3}
+  maps:
+  - {fileID: 2683052510114877746, guid: fae7eb5090223bc499c41ea8b258fc0a, type: 3}
+  - {fileID: 7141046449323438442, guid: ae3c3aa023215164dbadb6ac6cd89324, type: 3}
+  - {fileID: 4894497022740621825, guid: c38a0144c6289914e8e616a4298b4ec8, type: 3}
+  - {fileID: 3601794397437905228, guid: d2c5b805b8a6d264c82a03ee34d14f0e, type: 3}
+  - {fileID: 6026932969720882425, guid: ab930f239afd768419cabfbd04a7086a, type: 3}
