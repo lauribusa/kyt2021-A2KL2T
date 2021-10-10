@@ -5,7 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 [System.Serializable]
-public class OnPlayerCollision : UnityEvent<Collider2D, Collision2D, PlayerColliderType> { }
+public class OnPlayerCollision : UnityEvent<Collider2D, PlayerColliderType> { }
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
@@ -20,6 +20,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     private GameObject _shield;
+    [SerializeField]
+    private Collider2D _playerCollider;
 
     public OnPlayerCollision onPlayerCollision;
 
@@ -38,9 +40,12 @@ public class PlayerController : MonoBehaviour
     private bool _hasParried { get; set; }
     private bool _isShieldUp { get; set; }
     private bool _isParrying { get; set; }
+    private bool _isOnCooldown { get; set; }
+    private bool _isInvincible { get; set; }
     private PlayerFaction _playerFaction { get; set; }
 
-    private float parryingTimeReference { get; set; }
+    private float _parryingTimeReference { get; set; }
+    private float _cooldownTimeReference { get; set; }
 
     #endregion
 
@@ -53,7 +58,8 @@ public class PlayerController : MonoBehaviour
         if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody2D>();
         if (_transform == null) _transform = GetComponent<Transform>();
         onPlayerCollision.AddListener(HandleOnPlayerCollision);
-        parryingTimeReference = GameManager.I.gameData.parryingTime;
+        _parryingTimeReference = GameManager.I.gameData.parryingTime;
+        _hasParried = false;
     }
 
     private void FixedUpdate()
@@ -92,18 +98,31 @@ public class PlayerController : MonoBehaviour
         _currentSpeed = _speed;
     }
 
-    public IEnumerator WhileParrying(float time)
+    public IEnumerator WhileParrying(float time, float cooldownTime)
     {
+        _shield.GetComponent<Collider2D>().isTrigger = true;
         _isParrying = true;
+        _isInvincible = true;
         float elapsed = 0.0f;
         while (elapsed < time)
         {
-            Debug.Log("Still in loop");
+            //Debug.Log("Still in loop");
             elapsed += Time.deltaTime;
             yield return null;
         }
         _isParrying = false;
+        _isInvincible = false;
         _hasParried = false;
+        yield return null;
+        elapsed = 0.0f;
+        _isOnCooldown = true;
+        DisableShield();
+        while (elapsed < cooldownTime)
+        {  
+            yield return null;
+        }
+        _isOnCooldown = false;
+        _shield.GetComponent<Collider2D>().isTrigger = false;
         yield break;
     }
 
@@ -111,11 +130,12 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log("Triggered");
         if (!_isShieldUp) return;
-        StartCoroutine(WhileParrying(parryingTimeReference));
+        StartCoroutine(WhileParrying(_parryingTimeReference, _cooldownTimeReference));
     }
 
     public void OnAiming(InputAction.CallbackContext callbackContext)
     {
+        if (_isOnCooldown) return;
         if (_isParrying) return;
         Vector2 rightStick = callbackContext.ReadValue<Vector2>();
 
@@ -141,16 +161,18 @@ public class PlayerController : MonoBehaviour
     }
 
     [SerializeField]
-    private void HandleOnPlayerCollision(Collider2D collider, Collision2D collision, PlayerColliderType colliderType)
+    private void HandleOnPlayerCollision(Collider2D collider, PlayerColliderType colliderType)
     {
-        Debug.Log("" + (colliderType == PlayerColliderType.Shield) + (collision.collider.gameObject.layer == 7) + _isParrying + !_hasParried);
-        if (colliderType == PlayerColliderType.Shield && collision.collider.gameObject.layer == 7 && _isParrying && !_hasParried)
+        Debug.Log(" " + _isParrying + _hasParried);
+        if (colliderType == PlayerColliderType.Shield && collider.gameObject.layer == 7 && _isParrying && !_hasParried)
         {
             Debug.Log("Parry condition fulfilled");
-            collision.rigidbody.gameObject.GetComponent<BallController>().ParryBall(_currentDirection);
+            BallController ballController = collider.gameObject.GetComponent<BallController>();
+            ballController.ballRigidbody.position = _shield.transform.position + _shield.transform.up * 1.5f;
+            ballController.ParryBall(_shield.transform.up);
             _hasParried = true;
         }
-        if (colliderType == PlayerColliderType.Hitbox && collision.collider.gameObject.layer == 7)
+        if (colliderType == PlayerColliderType.Hitbox && collider.gameObject.layer == 7 && !_isInvincible)
         {
             Debug.Log("Triggered death");
             HandleDeath();

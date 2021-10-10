@@ -40,6 +40,11 @@ public enum VelocityCollisionMode
         ballVelocityMagnitude = ballCollider.attachedRigidbody.velocity.magnitude;
     }
 
+    private void Update()
+    {
+
+    }
+
     private void FixedUpdate()
     {
         ballRigidbody.velocity = ballRigidbody.velocity.normalized * ballVelocityMagnitude;
@@ -74,18 +79,9 @@ public enum VelocityCollisionMode
 
     public void ParryBall(Vector2 newDirection)
     {
-        Debug.Log("Has been parried");
-        ballRigidbody.velocity = Vector2.zero;
+        IncreaseVelocityOnCollision();
         ballRigidbody.velocity = newDirection * ballVelocityMagnitude;
-        // KEEP FOR PLAYER REFLECT FUNCTION
-        //Vector2 avgNormal = Vector2.zero;
-        //for (int i = 0; i < collision.contactCount; i++)
-        //{
-        //    avgNormal += collision.GetContact(i).normal;
-        //}
-        //avgNormal /= collision.contactCount;
-        //ballRigidbody.velocity = Vector2.Reflect(preHitVelocity, avgNormal);
-        //ballRigidbody.velocity = ballRigidbody.velocity.normalized * ballVelocityMagnitude;
+        Debug.Log(newDirection +" "+ ballVelocityMagnitude);
     }
 
     #endregion

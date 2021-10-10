@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: GameData
   m_EditorClassIdentifier: 
   initialTimer: 0
-  parryingTime: 10
+  parryingTime: 1
   maps: []
